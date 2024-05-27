@@ -12,9 +12,13 @@ display_menu() {
     echo "7. Copy a file"
     echo "8. Rename a file or directory"
     echo "9. Search for files"
-    echo "10. Exit"
-    echo "11. Clear Display"
-    echo -n "Enter your choice [1-10]: "
+    echo "10. Edit File"
+    echo "11. Change Directory"
+    echo "12. Current Directory"
+    echo "13. Compress Files"
+    echo "14. Clear Display"
+    echo "15. Exit"
+    echo -n "Enter your choice [1-11]: "
 }
 
 # Function to create a file
@@ -132,8 +136,35 @@ search_files() {
 }
 
 clear_display(){
-   clear 
+    clear
 }
+
+edit_file(){
+    echo -n "Enter the filename to edit: "
+    read filename
+    vim "$filename"
+}
+
+current_directory(){
+    echo -n "Your Current Directory is:"
+    pwd
+}
+
+change_directory(){
+    echo -n "Enter a directory: "
+    read newDirectory
+    cd "$newDirectory"
+}
+
+compress_files(){
+    echo -n "Enter file names you want to compress (separated by spaces): "
+    read -a fileNames
+    echo -n "Enter archive name: "
+    read zipName
+    
+    zip -r "$zipName" "${fileNames[@]}"
+}
+
 
 # Main loop
 while true; do
@@ -149,8 +180,12 @@ while true; do
         7) copy_file ;;
         8) rename_file_or_directory ;;
         9) search_files ;;
-        10) echo "Exiting..."; exit 0 ;;
-        11) clear_display ;;
+        10) edit_file ;;
+        11) change_directory ;;
+        12) current_directory ;;
+        13) compress_files ;;
+        14) clear_display ;;
+        15) echo -n "\nSuccessfully Terminated. Thank you."; exit 0 ;;
         *) echo "Invalid option, please select a valid option." ;;
     esac
     echo
