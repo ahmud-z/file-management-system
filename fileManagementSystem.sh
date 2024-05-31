@@ -17,7 +17,9 @@ display_menu() {
     echo "12. Current Directory"
     echo "13. Compress Files"
     echo "14. Clear Display"
-    echo "15. Exit"
+    echo "15. Sort Files"
+    echo "16. View File"
+    echo "17. Exit"
     echo -n "Enter your choice [1-11]: "
 }
 
@@ -139,10 +141,39 @@ clear_display(){
     clear
 }
 
-edit_file(){
+# edit files
+edit_file() {
     echo -n "Enter the filename to edit: "
     read filename
-    vim "$filename"
+    
+    echo "Choose an editor:"
+    echo "1. vim"
+    echo "2. nano"
+    echo "3. code (VS Code)"
+    read editor_choice
+    
+    case $editor_choice in
+        1)
+            vim "$filename"
+        ;;
+        2)
+            nano "$filename"
+        ;;
+        3)
+            code "$filename"
+        ;;
+        *)
+            echo "Invalid choice. Please select 1, 2, or 3."
+        ;;
+    esac
+}
+
+# View file
+view_file_data() {
+    echo -n "Enter your file name: "
+    read fileName
+    echo -e "File data are displayed below:\n"
+    cat "$fileName"
 }
 
 current_directory(){
@@ -165,6 +196,35 @@ compress_files(){
     zip -r "$zipName" "${fileNames[@]}"
 }
 
+sort_files() {
+    echo "Enter the directory path you want to sort files in: "
+    read dirPath
+    echo "Choose sorting criteria:"
+    echo "1. Name"
+    echo "2. Size"
+    echo "3. Modification Date"
+    read choice
+    
+    case $choice in
+        1)
+            echo "Sorting files by name:"
+            ls -1 "$dirPath" | sort
+        ;;
+        2)
+            echo "Sorting files by size:"
+            ls -lS "$dirPath"
+        ;;
+        3)
+            echo "Sorting files by modification date:"
+            ls -lt "$dirPath"
+        ;;
+        *)
+            echo "Invalid choice"
+        ;;
+    esac
+}
+
+
 
 # Main loop
 while true; do
@@ -185,7 +245,9 @@ while true; do
         12) current_directory ;;
         13) compress_files ;;
         14) clear_display ;;
-        15) echo -n "\nSuccessfully Terminated. Thank you."; exit 0 ;;
+        15) sort_files ;;
+        16) view_file_data ;;
+        17) echo -e "\nSuccessfully Terminated. Thank you.\n"; exit 0 ;;
         *) echo "Invalid option, please select a valid option." ;;
     esac
     echo
