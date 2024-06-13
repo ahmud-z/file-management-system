@@ -1,27 +1,28 @@
-#!/bin/bash
 
 # Function to display menu
 display_menu() {
-    echo "File Management System"
+    echo "=============================="
+    echo "      File Management System"
+    echo "=============================="
     echo "1. Create files or directories"
     echo "2. Delete files or directories"
     echo "3. Move files or directories"
     echo "4. List files in a directory"
-    echo "9. Rename a file or directory"
-    echo "5. Set file permissions"
-    echo "8. Copy a file"
-    echo "10. Search for files"
-    echo "11. Edit File"
-    echo "12. Sort File Data"
-    echo "13. Change Directory"
-    echo "14. Current Directory"
-    echo "15. Compress Files"
-    echo "16. Unzip Files"
-    echo "17. Sort Files"
-    echo "18. View File"
+    echo "5. Rename a file or directory"
+    echo "6. Set file permissions"
+    echo "7. Copy file"
+    echo "8. Edit File"
+    echo "9. Search for files"
+    echo "10. Sort File Data"
+    echo "11. Sort Files"
+    echo "12. View File"
+    echo "13. Compress Files"
+    echo "14. Unzip Files"
+    echo "15. Change Directory"
+    echo "16. Current Directory"
     echo "0. Clear Display"
     echo "00. Exit"
-    echo -n "Enter your choice [1-18]: "
+    echo -n "Enter your choice [00-16]: "
 }
 
 # Function to create a file
@@ -46,8 +47,6 @@ create_files_or_directories() {
     fi
 }
 
-
-
 # Function to delete a file
 delete_files_or_directories() {
     echo -n "Enter the names to delete (space-separated): "
@@ -71,7 +70,7 @@ delete_files_or_directories() {
 
 # Function to move a file
 move_files_or_directories() {
-    echo -n "Enter the names to move (space-separated): "
+    echo -n "Enter file names to move (space-separated): "
     read -a names
     echo -n "Enter the destination directory: "
     read dest
@@ -146,6 +145,7 @@ search_files() {
     fi
 }
 
+# Clear Display
 clear_display(){
     clear
 }
@@ -177,7 +177,7 @@ edit_file() {
     esac
 }
 
-# View file
+# View file data
 view_file_data() {
     echo -n "Enter your file name: "
     read fileName
@@ -186,19 +186,22 @@ view_file_data() {
     echo -e "\n"
 }
 
+# Current directory
 current_directory(){
     echo -n "Your Current Directory is:"
     pwd
 }
 
+# Change directory
 change_directory(){
     echo -n "Enter a directory: "
     read newDirectory
     cd "$newDirectory"
 }
 
+# Compress files
 compress_files(){
-    echo -n "Enter file names you want to compress (separated by spaces): "
+    echo -n "Enter file names want to compress (separate by space): "
     read -a fileNames
     echo -n "Enter archive name: "
     read zipName
@@ -206,7 +209,7 @@ compress_files(){
     zip -r "$zipName" "${fileNames[@]}"
 }
 
-
+# Extract/unzip files
 unzip_file() {
     echo -n "Enter the name of the zip file to unzip: "
     read zipFile
@@ -223,23 +226,71 @@ unzip_file() {
     echo "File unzipped successfully."
 }
 
+# Set file permission
 set_file_permissions() {
-    echo -n "Enter the file path for which you want to set permissions: "
+    echo -n "Enter the file name to set permissions: "
     read filePath
+    
+    if [ ! -e "$filePath" ]; then
+        echo "File '$filePath' not found."
+        return 1
+    fi
     
     echo "Current permissions for $filePath:"
     ls -l "$filePath"
     
-    echo -n "Enter the new permissions (e.g., 755): "
-    read permissions
+    echo -n "Enter user type you want to modify permissions? (user, grp, other): "
+    read userType
     
-    chmod "$permissions" "$filePath"
+    echo -n "Do you want to add or remove permissions? (add, remove): "
+    read action
+    
+    echo -n "Enter the permissions you want to $action (e.g., rwx): "
+    read perm
+    
+    case "$userType" in
+        "user")
+            if [ "$action" == "add" ]; then
+                chmod u+"$perm" "$filePath"
+                elif [ "$action" == "remove" ]; then
+                chmod u-"$perm" "$filePath"
+            else
+                echo "Invalid action. Please choose 'add' or 'remove'."
+                return 1
+            fi
+        ;;
+        "grp")
+            if [ "$action" == "add" ]; then
+                chmod g+"$perm" "$filePath"
+                elif [ "$action" == "remove" ]; then
+                chmod g-"$perm" "$filePath"
+            else
+                echo "Invalid action. Please choose 'add' or 'remove'."
+                return 1
+            fi
+        ;;
+        "other")
+            if [ "$action" == "add" ]; then
+                chmod o+"$perm" "$filePath"
+                elif [ "$action" == "remove" ]; then
+                chmod o-"$perm" "$filePath"
+            else
+                echo "Invalid action. Please choose 'add' or 'remove'."
+                return 1
+            fi
+        ;;
+        *)
+            echo "Invalid user type. Please choose 'user', 'grp', or 'other'."
+            return 1
+        ;;
+    esac
     
     echo "Permissions updated for $filePath:"
     ls -l "$filePath"
 }
 
 
+# Sort file data
 sort_file_data() {
     echo "Enter a file name you want to sort: "
     read fileName
@@ -264,7 +315,7 @@ sort_file_data() {
     esac
 }
 
-
+# Sort files of a directory
 sort_files() {
     echo "Enter the directory path you want to sort files in: "
     read dirPath
@@ -303,18 +354,18 @@ while true; do
         2) delete_files_or_directories ;;
         3) move_files_or_directories ;;
         4) list_files ;;
-        5) set_file_permissions ;;
-        8) copy_file ;;
-        9) rename_file_or_directory ;;
-        10) search_files ;;
-        11) edit_file ;;
-        12) sort_file_data ;;
-        13) change_directory ;;
-        14) current_directory ;;
-        15) compress_files ;;
-        16) unzip_file ;;
-        17) sort_files ;;
-        18) view_file_data ;;
+        5) rename_file_or_directory ;;
+        6) set_file_permissions ;;
+        7) copy_file ;;
+        8) edit_file ;;
+        9) search_files ;;
+        10) sort_file_data ;;
+        11) sort_files ;;
+        12) view_file_data ;;
+        13) compress_files ;;
+        14) unzip_file ;;
+        15) change_directory ;;
+        16) current_directory ;;
         0) clear_display ;;
         00) echo -e "\nSuccessfully Terminated. Thank you.\n"; exit 0 ;;
         *) echo "Invalid option, please select a valid option." ;;
